@@ -11,8 +11,65 @@
 @import "./css/colors/scheme-01.css";
 @import "./css/styles/coloring.css";
 
-.hot-collections-slider .keen-slider__slide {
+.hot-collections-slider .keen-slider__slide,
+.new-items-slider .keen-slider__slide {
   min-width: 0;
+}
+
+.new-items-slider .new-item-card {
+  position: relative;
+  height: calc(100% - 10px);
+}
+
+.new-items-slider .nft_wrap {
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.new-items-slider .nft_wrap a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.new-items-slider .nft_wrap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.new-items-slider .nft_coll_pp {
+  width: 80px;
+  margin-top: -40px;
+}
+
+.new-items-slider .nft_coll_pp img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.new-items-slider .nft_coll_info {
+  padding: 8px 12px 18px;
+}
+
+.new-items-slider .new-item-price {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.new-items-slider .new-item-like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.new-items-slider .de_countdown {
+  top: 12px;
+  right: 12px;
 }
 
 .hot-collections-slider .nft_coll {
@@ -25,11 +82,13 @@
   object-fit: cover;
 }
 
-.hot-collections-carousel {
+.hot-collections-carousel,
+.new-items-carousel {
   position: relative;
 }
 
-.hot-collections-controls {
+.hot-collections-controls,
+.new-items-controls {
   position: absolute;
   top: 79px;
   left: 12px;
@@ -39,7 +98,12 @@
   pointer-events: none;
 }
 
-.hot-collections-controls button {
+.new-items-controls {
+  top: clamp(75px, 10vw, 145px);
+}
+
+.hot-collections-controls button,
+.new-items-controls button {
   width: 42px;
   height: 42px;
   border: 1px solid rgba(255, 255, 255, .8);
@@ -52,12 +116,14 @@
   pointer-events: auto;
 }
 
-.hot-collections-controls button:focus-visible {
+.hot-collections-controls button:focus-visible,
+.new-items-controls button:focus-visible {
   outline: 3px solid #fff;
   outline-offset: 2px;
 }
 
-.hot-collections-position {
+.hot-collections-position,
+.new-items-position {
   text-align: center;
   margin: 12px 0 0;
 }
@@ -93,6 +159,14 @@
 @media (max-width: 991px) {
   .hot-collections-skeleton { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hot-collection-placeholder:nth-child(n+3) { display: none; }
+}
+
+@media (max-width: 767px) {
+  .new-items-controls { top: 110px; }
+}
+
+@media (max-width: 575px) {
+  .new-items-controls { top: 160px; }
 }
 
 @media (max-width: 575px) {
