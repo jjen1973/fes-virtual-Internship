@@ -26,3 +26,18 @@ export const SellerListSkeleton = ({ count = 12 }) => (
     ))}
   </ol>
 );
+
+export const AuthorProfileSkeleton = () => (
+  <div className="author-profile-loading" role="status" aria-label="Loading author profile">
+    <div className="author-profile-loading-header" aria-hidden="true">
+      <Skeleton width="150px" height="150px" borderRadius="50%" />
+      <div className="author-profile-loading-copy">
+        <Skeleton width="210px" height="28px" borderRadius="4px" />
+        <Skeleton width="130px" height="16px" borderRadius="4px" />
+        <Skeleton width="min(520px, 75vw)" height="16px" borderRadius="4px" />
+        <Skeleton width="110px" height="16px" borderRadius="4px" />
+      </div>
+    </div>
+    <NftGridSkeleton count={4} label="Loading author NFTs" />
+  </div>
+);

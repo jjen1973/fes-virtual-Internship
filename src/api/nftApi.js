@@ -7,10 +7,19 @@ export const API_URLS = {
   hotCollections: `${API_ROOT}/hotCollections`,
   newItems: `${API_ROOT}/newItems`,
   topSellers: `${API_ROOT}/topSellers`,
+  authors: `${API_ROOT}/authors`,
 };
 
 export const fetchApiList = async (url, signal) => {
   const { data } = await axios.get(url, { signal, timeout: 15000 });
   if (!Array.isArray(data)) throw new Error("Unexpected API response");
+  return data;
+};
+
+export const fetchApiObject = async (url, signal) => {
+  const { data } = await axios.get(url, { signal, timeout: 15000 });
+  if (!data || Array.isArray(data) || typeof data !== "object") {
+    throw new Error("Unexpected API response");
+  }
   return data;
 };

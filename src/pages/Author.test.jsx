@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import axios from "axios";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -7,34 +7,31 @@ import Author from "./Author";
 
 jest.mock("axios");
 
-test("loads the seller matching the author ID in the URL", async () => {
+test("loads complete author information and NFTs from the authors API", async () => {
   window.scrollTo = jest.fn();
-  axios.get.mockImplementation((url) => {
-    if (url.endsWith("/topSellers")) return Promise.resolve({ data: [
-      {
-        id: 1,
-        authorId: 111,
-        authorName: "First Seller",
-        authorImage: "/first.jpg",
-        price: 1.2,
-      },
-      {
-        id: 2,
-        authorId: 222,
-        authorName: "Second Seller",
-        authorImage: "/second.jpg",
-        price: 7.2,
-      },
-    ] });
-    if (url.endsWith("/newItems")) return Promise.resolve({ data: [
-      { id: 10, authorId: 222, title: "Seller NFT", nftImage: "/nft.jpg", price: 2.5 },
-    ] });
-    if (url.endsWith("/hotCollections")) return Promise.resolve({ data: [
-      { id: 20, authorId: 222, title: "Seller Collection", nftImage: "/collection.jpg" },
-    ] });
-    return Promise.resolve({ data: [
-      { id: 30, nftId: 300, authorId: 222, title: "Explore NFT", nftImage: "/explore.jpg" },
-    ] });
+  Object.assign(navigator, {
+    clipboard: { writeText: jest.fn().mockResolvedValue(undefined) },
+  });
+  axios.get.mockResolvedValue({
+    data: {
+      id: 2,
+      authorId: 222,
+      authorName: "Second Seller",
+      authorImage: "/second.jpg",
+      tag: "secondseller",
+      address: "0xAuthorBlockchainAddress",
+      followers: 632,
+      nftCollection: [
+        {
+          id: 1,
+          nftId: 300,
+          title: "Seller NFT",
+          nftImage: "/nft.jpg",
+          price: 2.5,
+          likes: 99,
+        },
+      ],
+    },
   });
 
   render(
@@ -45,20 +42,38 @@ test("loads the seller matching the author ID in the URL", async () => {
     </MemoryRouter>
   );
 
+  expect(screen.getByRole("status", { name: "Loading author profile" })).toBeInTheDocument();
   expect(await screen.findByRole("heading", { name: /Second Seller/, level: 4 })).toBeInTheDocument();
-  expect(screen.getByRole("img", { name: "Second Seller" })).toHaveAttribute(
-    "src",
-    "/second.jpg"
-  );
-  expect(screen.getByText("Author ID: 222")).toBeInTheDocument();
-  expect(screen.getByText("Top seller total: 7.2 ETH")).toBeInTheDocument();
-  expect(screen.queryByText("First Seller")).not.toBeInTheDocument();
-  expect(screen.queryByText("Pinky Ocean")).not.toBeInTheDocument();
+  expect(screen.getByRole("img", { name: "Second Seller" })).toHaveAttribute("src", "/second.jpg");
+  expect(screen.getByText("@secondseller")).toBeInTheDocument();
+  expect(screen.getByText("632 followers")).toBeInTheDocument();
+  expect(screen.getByText("0xAuthorBlockchainAddress")).toBeInTheDocument();
   expect(screen.getByText("Seller NFT")).toBeInTheDocument();
-  expect(screen.getByText("Seller Collection")).toBeInTheDocument();
-  expect(screen.getByText("Explore NFT")).toBeInTheDocument();
+  expect(screen.getByText("NFT #300")).toBeInTheDocument();
   expect(screen.getByText("2.50 ETH")).toBeInTheDocument();
-  expect(screen.getByText("New Item")).toBeInTheDocument();
-  expect(screen.getByText("Hot Collection")).toBeInTheDocument();
-  expect(screen.getByText("Explore")).toBeInTheDocument();
+  expect(screen.getByText("99 likes")).toBeInTheDocument();
+  expect(axios.get).toHaveBeenCalledWith(
+    "https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=222",
+    expect.objectContaining({ timeout: 15000 })
+  );
+
+  fireEvent.click(screen.getByRole("button", { name: "Copy address" }));
+  await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+    "0xAuthorBlockchainAddress"
+  ));
+  expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Follow" }));
+  expect(screen.getByText("633 followers")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Unfollow" })).toHaveAttribute(
+    "aria-pressed",
+    "true"
+  );
+
+  fireEvent.click(screen.getByRole("button", { name: "Unfollow" }));
+  expect(screen.getByText("632 followers")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Follow" })).toHaveAttribute(
+    "aria-pressed",
+    "false"
+  );
 });

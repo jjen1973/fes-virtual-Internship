@@ -1,63 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AuthorBanner from "../images/author_banner.jpg";
-import AuthorItems from "../components/author/AuthorItems";
-import AuthorImage from "../images/author_thumbnail.jpg";
-import { API_URLS, fetchApiList } from "../api/nftApi";
+import { API_URLS, fetchApiObject } from "../api/nftApi";
+import { AuthorProfileSkeleton } from "../components/UI/LoadingSkeletons";
 
-const DEFAULT_AUTHOR = {
-  authorName: "Monica Lucas",
-  authorImage: AuthorImage,
-  authorId: 83937449,
-  price: 2.1,
-};
+const DEFAULT_AUTHOR_ID = 83937449;
 
 const Author = () => {
   const { authorId } = useParams();
-  const [author, setAuthor] = useState(authorId ? null : DEFAULT_AUTHOR);
-  const [loading, setLoading] = useState(Boolean(authorId));
+  const selectedAuthorId = authorId || String(DEFAULT_AUTHOR_ID);
+  const [author, setAuthor] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [nfts, setNfts] = useState([]);
+  const [copied, setCopied] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!authorId) {
-      setAuthor(DEFAULT_AUTHOR);
-      setLoading(false);
-      return undefined;
-    }
-
     const controller = new AbortController();
+    setAuthor(null);
     setLoading(true);
     setError("");
+    setCopied(false);
+    setIsFollowing(false);
 
-    async function fetchAuthor() {
+    async function loadAuthor() {
       try {
-        const [sellers, newItems, collections, exploreItems] =
-          await Promise.all([
-            fetchApiList(API_URLS.topSellers, controller.signal),
-            fetchApiList(API_URLS.newItems, controller.signal),
-            fetchApiList(API_URLS.hotCollections, controller.signal),
-            fetchApiList(API_URLS.explore, controller.signal),
-          ]);
-        const matchingAuthor = sellers.find(
-          (seller) => String(seller.authorId) === authorId
+        const data = await fetchApiObject(
+          `${API_URLS.authors}?author=${encodeURIComponent(selectedAuthorId)}`,
+          controller.signal
         );
-        const matchingNfts = [
-          ...newItems.map((item) => ({ ...item, source: "New Item" })),
-          ...collections.map((item) => ({ ...item, source: "Hot Collection" })),
-          ...exploreItems.map((item) => ({ ...item, source: "Explore" })),
-        ].filter((item) => String(item.authorId) === authorId);
-        const authorNfts = Array.from(
-          new Map(
-            matchingNfts.map((item) => [item.nftId || `${item.source}-${item.id}`, item])
-          ).values()
-        );
-        if (!controller.signal.aborted) {
-          setAuthor(matchingAuthor || null);
-          setNfts(authorNfts);
-          if (!matchingAuthor) setError("Author not found.");
-        }
+        if (!controller.signal.aborted) setAuthor(data);
       } catch (requestError) {
         if (!controller.signal.aborted) {
           setError("Unable to load this author. Please try again later.");
@@ -67,9 +40,17 @@ const Author = () => {
       }
     }
 
-    fetchAuthor();
+    loadAuthor();
     return () => controller.abort();
-  }, [authorId]);
+  }, [selectedAuthorId]);
+
+  const copyAddress = async () => {
+    if (!author?.address) return;
+    await navigator.clipboard.writeText(author.address);
+    setCopied(true);
+  };
+
+  const followerCount = Number(author?.followers || 0) + (isFollowing ? 1 : 0);
 
   return (
     <div id="wrapper">
@@ -84,7 +65,7 @@ const Author = () => {
 
         <section aria-label="Author profile">
           <div className="container">
-            {loading && <p role="status">Loading author...</p>}
+            {loading && <AuthorProfileSkeleton />}
             {!loading && error && (
               <p role="alert">{error} <Link to="/">View Top Sellers</Link></p>
             )}
@@ -99,56 +80,64 @@ const Author = () => {
                         <div className="profile_name">
                           <h4>
                             {author.authorName}
-                            <span className="profile_username">Author ID: {author.authorId}</span>
-                            <span className="profile_wallet">
-                              Top seller total: {Number(author.price).toFixed(1)} ETH
+                            <span className="profile_username">@{author.tag}</span>
+                            <span id="wallet" className="profile_wallet" title={author.address}>
+                              {author.address}
                             </span>
+                            <button id="btn_copy" type="button" onClick={copyAddress}>
+                              {copied ? "Copied" : "Copy address"}
+                            </button>
                           </h4>
                         </div>
                       </div>
                     </div>
                     <div className="profile_follow de-flex">
                       <div className="de-flex-col">
-                        <Link to="/" className="btn-main">Back to Top Sellers</Link>
+                        <div className="profile_follower" aria-live="polite">
+                          {followerCount} followers
+                        </div>
+                        <button
+                          type="button"
+                          className="btn-main author-follow-button"
+                          aria-pressed={isFollowing}
+                          onClick={() => setIsFollowing((following) => !following)}
+                        >
+                          {isFollowing ? "Unfollow" : "Follow"}
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-                {!authorId && (
-                  <div className="col-md-12">
-                    <div className="de_tab tab_simple">
-                      <AuthorItems />
-                    </div>
+
+                <div className="col-md-12">
+                  <div className="text-center">
+                    <h2>{author.authorName}&apos;s NFTs</h2>
+                    <div className="small-border bg-color-2"></div>
                   </div>
-                )}
-                {authorId && (
-                  <div className="col-md-12">
-                    <div className="text-center">
-                      <h2>{author.authorName}&apos;s NFTs</h2>
-                      <div className="small-border bg-color-2"></div>
-                    </div>
-                    {nfts.length === 0 ? (
-                      <p className="text-center">No NFTs are available for this author in the current APIs.</p>
-                    ) : (
-                      <div className="row">
-                        {nfts.map((nft) => (
-                          <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={`${nft.source}-${nft.id}`}>
-                            <div className="nft_coll author-nft-card">
-                              <div className="nft_wrap">
-                                <img src={nft.nftImage} className="img-fluid" alt={nft.title} />
-                              </div>
-                              <div className="nft_coll_info">
-                                <h4>{nft.title}</h4>
-                                <span>{nft.source}</span>
-                                {nft.price != null && <div>{Number(nft.price).toFixed(2)} ETH</div>}
+                  {!author.nftCollection?.length ? (
+                    <p className="text-center">No NFTs are available for this author.</p>
+                  ) : (
+                    <div className="row">
+                      {author.nftCollection.map((nft) => (
+                        <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={nft.nftId}>
+                          <article className="nft_coll author-nft-card">
+                            <div className="nft_wrap">
+                              <img src={nft.nftImage} className="img-fluid" alt={nft.title} />
+                            </div>
+                            <div className="nft_coll_info">
+                              <h4>{nft.title}</h4>
+                              <span>NFT #{nft.nftId}</span>
+                              <div>{Number(nft.price).toFixed(2)} ETH</div>
+                              <div className="author-nft-likes">
+                                <i className="fa fa-heart" aria-hidden="true"></i> {nft.likes} likes
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                          </article>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

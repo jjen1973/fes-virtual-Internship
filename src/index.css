@@ -239,6 +239,47 @@
   gap: 8px;
 }
 
+.author-profile-loading {
+  padding-top: 30px;
+}
+
+.author-profile-loading-header {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 50px;
+}
+
+.author-profile-loading-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile_wallet {
+  overflow-wrap: anywhere;
+}
+
+.author-nft-card {
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+.author-nft-card .nft_wrap img {
+  aspect-ratio: 1;
+  object-fit: cover;
+  width: 100%;
+}
+
+.author-nft-likes {
+  margin-top: 6px;
+}
+
+.author-follow-button {
+  min-width: 110px;
+  border: 0;
+}
+
 @media (max-width: 767px) {
   .nft-loading-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -252,6 +293,11 @@
 
   .nft-loading-grid {
     grid-template-columns: 1fr;
+  }
+
+  .author-profile-loading-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 .explore-controls {
