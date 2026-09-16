@@ -85,18 +85,18 @@ const HotCollections = () => {
                   <div className="keen-slider__slide" key={collection.id}>
               <div className="nft_coll">
                 <div className="nft_wrap">
-                  <Link to="/item-details">
+                  <Link to={`/collection-details/${collection.id}`}>
                     <img src={collection.nftImage} className="lazy img-fluid" alt={collection.title} />
                   </Link>
                 </div>
                 <div className="nft_coll_pp">
-                  <Link to="/author">
-                    <img className="lazy pp-coll" src={collection.authorImage} alt="" />
+                  <Link to={`/collection-details/${collection.id}`} title={`View ${collection.title} details`}>
+                    <img className="lazy pp-coll" src={collection.authorImage} alt={`Creator of ${collection.title}`} />
                   </Link>
                   <i className="fa fa-check"></i>
                 </div>
                 <div className="nft_coll_info">
-                  <Link to="/explore">
+                  <Link to={`/collection-details/${collection.id}`}>
                     <h4>{collection.title}</h4>
                   </Link>
                   <span>ERC-{collection.code}</span>
