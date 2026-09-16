@@ -13,10 +13,10 @@ const HotCollections = () => {
   const [sliderRef, slider] = useKeenSlider({
     mode: "snap",
     loop: collections.length > 1,
-    slides: { perView: 1.15, spacing: 16 },
+    slides: { perView: 1, spacing: 16 },
     breakpoints: {
-      "(min-width: 576px)": { slides: { perView: 2, spacing: 20 } },
-      "(min-width: 992px)": { slides: { perView: 4, spacing: 24 } },
+      "(min-width: 576px)": { slides: { perView: 2, spacing: 16 } },
+      "(min-width: 768px)": { slides: { perView: 4, spacing: 16 } },
     },
     slideChanged(instance) {
       setCurrentSlide(instance.track.details.rel);
