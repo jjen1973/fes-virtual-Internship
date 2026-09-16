@@ -1,54 +1,16 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { Link } from "react-router-dom";
-import { useKeenSlider } from "keen-slider/react";
-import "keen-slider/keen-slider.min.css";
 import Countdown from "../UI/Countdown";
-
-const NEW_ITEMS_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
+import { API_URLS } from "../../api/nftApi";
+import useApiList from "../../hooks/useApiList";
+import useResponsiveCarousel from "../../hooks/useResponsiveCarousel";
 
 const NewItems = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [sliderRef, slider] = useKeenSlider({
-    mode: "snap",
-    loop: items.length > 1,
-    slides: { perView: 1, spacing: 16 },
-    breakpoints: {
-      "(min-width: 576px)": { slides: { perView: 2, spacing: 16 } },
-      "(min-width: 768px)": { slides: { perView: 4, spacing: 16 } },
-    },
-    slideChanged(instance) {
-      setCurrentSlide(instance.track.details.rel);
-    },
-  });
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchItems() {
-      try {
-        const { data } = await axios.get(NEW_ITEMS_URL, {
-          signal: controller.signal,
-          timeout: 15000,
-        });
-        if (!Array.isArray(data)) throw new Error("Unexpected new items response");
-        if (!controller.signal.aborted) setItems(data);
-      } catch (requestError) {
-        if (!controller.signal.aborted) {
-          setError("Unable to load new items. Please try again later.");
-        }
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }
-
-    fetchItems();
-    return () => controller.abort();
-  }, []);
+  const { data: items, loading, error } = useApiList(
+    API_URLS.newItems,
+    "Unable to load new items. Please try again later."
+  );
+  const { currentSlide, slider, sliderRef } = useResponsiveCarousel(items.length);
 
   return (
     <section id="section-items" className="no-bottom">
@@ -83,7 +45,7 @@ const NewItems = () => {
                     </Link>
                   </div>
                   <div className="nft_coll_pp">
-                    <Link to={`/item-details/${item.id}`} title={`View ${item.title} details`}>
+                    <Link to={`/${item.authorId}/author`} title={`View creator of ${item.title}`}>
                       <img className="lazy pp-coll" src={item.authorImage} alt={`Creator of ${item.title}`} />
                     </Link>
                     <i className="fa fa-check" aria-hidden="true"></i>

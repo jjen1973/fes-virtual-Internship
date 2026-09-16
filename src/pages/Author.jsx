@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../components/author/AuthorItems";
 import AuthorImage from "../images/author_thumbnail.jpg";
-
-const TOP_SELLERS_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/topSellers";
-const NEW_ITEMS_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
-const HOT_COLLECTIONS_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections";
-const EXPLORE_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore";
+import { API_URLS, fetchApiList } from "../api/nftApi";
 
 const DEFAULT_AUTHOR = {
   authorName: "Monica Lucas",
@@ -42,28 +33,20 @@ const Author = () => {
 
     async function fetchAuthor() {
       try {
-        const requestOptions = { signal: controller.signal, timeout: 15000 };
-        const [sellersResponse, newItemsResponse, collectionsResponse, exploreResponse] =
+        const [sellers, newItems, collections, exploreItems] =
           await Promise.all([
-            axios.get(TOP_SELLERS_URL, requestOptions),
-            axios.get(NEW_ITEMS_URL, requestOptions),
-            axios.get(HOT_COLLECTIONS_URL, requestOptions),
-            axios.get(EXPLORE_URL, requestOptions),
+            fetchApiList(API_URLS.topSellers, controller.signal),
+            fetchApiList(API_URLS.newItems, controller.signal),
+            fetchApiList(API_URLS.hotCollections, controller.signal),
+            fetchApiList(API_URLS.explore, controller.signal),
           ]);
-        if (
-          !Array.isArray(sellersResponse.data) ||
-          !Array.isArray(newItemsResponse.data) ||
-          !Array.isArray(collectionsResponse.data) ||
-          !Array.isArray(exploreResponse.data)
-        ) throw new Error("Unexpected author response");
-
-        const matchingAuthor = sellersResponse.data.find(
+        const matchingAuthor = sellers.find(
           (seller) => String(seller.authorId) === authorId
         );
         const matchingNfts = [
-          ...newItemsResponse.data.map((item) => ({ ...item, source: "New Item" })),
-          ...collectionsResponse.data.map((item) => ({ ...item, source: "Hot Collection" })),
-          ...exploreResponse.data.map((item) => ({ ...item, source: "Explore" })),
+          ...newItems.map((item) => ({ ...item, source: "New Item" })),
+          ...collections.map((item) => ({ ...item, source: "Hot Collection" })),
+          ...exploreItems.map((item) => ({ ...item, source: "Explore" })),
         ].filter((item) => String(item.authorId) === authorId);
         const authorNfts = Array.from(
           new Map(
@@ -95,7 +78,7 @@ const Author = () => {
         <section
           id="profile_banner"
           aria-label="Author banner"
-          className="text-light"
+          className="text-light author-profile-banner"
           style={{ background: `url(${AuthorBanner}) top` }}
         ></section>
 

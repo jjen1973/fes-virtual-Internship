@@ -1,38 +1,13 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { Link } from "react-router-dom";
-
-const TOP_SELLERS_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/topSellers";
+import { API_URLS } from "../../api/nftApi";
+import useApiList from "../../hooks/useApiList";
 
 const TopSellers = () => {
-  const [sellers, setSellers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchSellers() {
-      try {
-        const { data } = await axios.get(TOP_SELLERS_URL, {
-          signal: controller.signal,
-          timeout: 15000,
-        });
-        if (!Array.isArray(data)) throw new Error("Unexpected top sellers response");
-        if (!controller.signal.aborted) setSellers(data);
-      } catch (requestError) {
-        if (!controller.signal.aborted) {
-          setError("Unable to load top sellers. Please try again later.");
-        }
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }
-
-    fetchSellers();
-    return () => controller.abort();
-  }, []);
+  const { data: sellers, loading, error } = useApiList(
+    API_URLS.topSellers,
+    "Unable to load top sellers. Please try again later."
+  );
 
   return (
     <section id="section-popular" className="pb-5">

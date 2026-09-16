@@ -1,43 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Countdown from "../UI/Countdown";
-
-const EXPLORE_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore";
+import { API_URLS } from "../../api/nftApi";
+import useApiList from "../../hooks/useApiList";
 const INITIAL_ITEMS = 8;
 const LOAD_MORE_COUNT = 4;
 
 const ExploreItems = () => {
-  const [items, setItems] = useState([]);
   const [visibleCount, setVisibleCount] = useState(INITIAL_ITEMS);
   const [sortBy, setSortBy] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchItems() {
-      try {
-        const { data } = await axios.get(EXPLORE_URL, {
-          signal: controller.signal,
-          timeout: 15000,
-        });
-        if (!Array.isArray(data)) throw new Error("Unexpected explore response");
-        if (!controller.signal.aborted) setItems(data);
-      } catch (requestError) {
-        if (!controller.signal.aborted) {
-          setError("Unable to load Explore items. Please try again later.");
-        }
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }
-
-    fetchItems();
-    return () => controller.abort();
-  }, []);
+  const { data: items, loading, error } = useApiList(
+    API_URLS.explore,
+    "Unable to load Explore items. Please try again later."
+  );
 
   const sortedItems = useMemo(() => {
     const nextItems = [...items];

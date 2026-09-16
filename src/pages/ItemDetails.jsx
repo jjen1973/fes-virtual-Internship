@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useLocation, useParams } from "react-router-dom";
 import EthImage from "../images/ethereum.svg";
-
-const NEW_ITEMS_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
-const EXPLORE_URL =
-  "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore";
+import { API_URLS, fetchApiList } from "../api/nftApi";
 
 const ItemDetails = () => {
   const { id } = useParams();
   const location = useLocation();
   const isExploreItem = location.pathname.startsWith("/explore/item/");
-  const itemsUrl = isExploreItem ? EXPLORE_URL : NEW_ITEMS_URL;
+  const itemsUrl = isExploreItem ? API_URLS.explore : API_URLS.newItems;
   const backPath = isExploreItem ? "/explore" : "/";
   const backLabel = isExploreItem ? "Back to Explore" : "View New Items";
   const [item, setItem] = useState(null);
@@ -29,12 +24,7 @@ const ItemDetails = () => {
 
     async function fetchItem() {
       try {
-        const { data } = await axios.get(itemsUrl, {
-          signal: controller.signal,
-          timeout: 15000,
-        });
-        if (!Array.isArray(data)) throw new Error("Unexpected new items response");
-
+        const data = await fetchApiList(itemsUrl, controller.signal);
         const matchingItem = data.find((entry) => String(entry.id) === id);
         if (!controller.signal.aborted) {
           setItem(matchingItem || null);

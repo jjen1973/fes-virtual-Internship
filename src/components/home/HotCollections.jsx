@@ -1,53 +1,16 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { Link } from "react-router-dom";
-import { useKeenSlider } from "keen-slider/react";
-import "keen-slider/keen-slider.min.css";
 import Skeleton from "../UI/Skeleton";
+import { API_URLS } from "../../api/nftApi";
+import useApiList from "../../hooks/useApiList";
+import useResponsiveCarousel from "../../hooks/useResponsiveCarousel";
 
 const HotCollections = () => {
-  const [collections, setCollections] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [sliderRef, slider] = useKeenSlider({
-    mode: "snap",
-    loop: collections.length > 1,
-    slides: { perView: 1, spacing: 16 },
-    breakpoints: {
-      "(min-width: 576px)": { slides: { perView: 2, spacing: 16 } },
-      "(min-width: 768px)": { slides: { perView: 4, spacing: 16 } },
-    },
-    slideChanged(instance) {
-      setCurrentSlide(instance.track.details.rel);
-    },
-  });
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchCollections() {
-      try {
-        const { data } = await axios.get(
-          "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections",
-          { signal: controller.signal, timeout: 15000 }
-        );
-        if (!Array.isArray(data)) {
-          throw new Error("Unexpected collection response");
-        }
-        if (!controller.signal.aborted) setCollections(data);
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setError("Unable to load hot collections. Please try again later.");
-        }
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }
-
-    fetchCollections();
-    return () => controller.abort();
-  }, []);
+  const { data: collections, loading, error } = useApiList(
+    API_URLS.hotCollections,
+    "Unable to load hot collections. Please try again later."
+  );
+  const { currentSlide, slider, sliderRef } = useResponsiveCarousel(collections.length);
 
   return (
     <section id="section-collections" className="no-bottom">
@@ -85,18 +48,18 @@ const HotCollections = () => {
                   <div className="keen-slider__slide" key={collection.id}>
               <div className="nft_coll">
                 <div className="nft_wrap">
-                  <Link to="/item-details">
+                  <Link to={`/collection-details/${collection.id}`}>
                     <img src={collection.nftImage} className="lazy img-fluid" alt={collection.title} />
                   </Link>
                 </div>
                 <div className="nft_coll_pp">
-                  <Link to="/author">
-                    <img className="lazy pp-coll" src={collection.authorImage} alt="" />
+                  <Link to={`/${collection.authorId}/author`} title={`View creator of ${collection.title}`}>
+                    <img className="lazy pp-coll" src={collection.authorImage} alt={`Creator of ${collection.title}`} />
                   </Link>
                   <i className="fa fa-check"></i>
                 </div>
                 <div className="nft_coll_info">
-                  <Link to="/explore">
+                  <Link to={`/collection-details/${collection.id}`}>
                     <h4>{collection.title}</h4>
                   </Link>
                   <span>ERC-{collection.code}</span>
