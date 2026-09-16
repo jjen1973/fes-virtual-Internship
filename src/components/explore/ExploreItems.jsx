@@ -70,7 +70,7 @@ const ExploreItems = () => {
         <p className="col-12">No Explore items available.</p>
       )}
       {!loading && !error && visibleItems.map((item) => (
-        <div key={item.id} className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12">
+        <div key={item.id} className="d-item explore-item col-md-3 col-sm-6 col-xs-12">
           <div className="nft__item explore-item-card">
             <div className="author_list_pp">
               <Link to={`/${item.authorId}/author`} title={`View creator of ${item.title}`}>
