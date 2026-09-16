@@ -41,3 +41,42 @@ test("loads the item matching the URL ID instead of placeholder details", async 
   expect(screen.getByText("Creator ID: 55757699")).toBeInTheDocument();
   expect(screen.queryByText("First Item")).not.toBeInTheDocument();
 });
+
+test("loads an Explore item from the Explore API", async () => {
+  window.scrollTo = jest.fn();
+  axios.get.mockResolvedValue({
+    data: [{
+      id: 16,
+      nftId: 1600,
+      authorId: 900,
+      authorImage: "/explore-author.jpg",
+      nftImage: "/explore-item.jpg",
+      title: "Explore Item",
+      price: 0.29,
+      likes: 68,
+      expiryDate: null,
+    }],
+  });
+
+  render(
+    <MemoryRouter initialEntries={["/explore/item/16"]}>
+      <Routes>
+        <Route path="/explore/item/:id" element={<ItemDetails />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  expect(await screen.findByRole("heading", { name: "Explore Item" })).toBeInTheDocument();
+  expect(axios.get).toHaveBeenCalledWith(
+    "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore",
+    expect.objectContaining({ timeout: 15000 })
+  );
+  expect(screen.getByRole("link", { name: "Creator of Explore Item" })).toHaveAttribute(
+    "href",
+    "/900/author"
+  );
+  expect(screen.getByRole("link", { name: "Back to Explore" })).toHaveAttribute(
+    "href",
+    "/explore"
+  );
+});

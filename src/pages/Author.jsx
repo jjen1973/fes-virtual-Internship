@@ -11,6 +11,8 @@ const NEW_ITEMS_URL =
   "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
 const HOT_COLLECTIONS_URL =
   "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections";
+const EXPLORE_URL =
+  "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore";
 
 const DEFAULT_AUTHOR = {
   authorName: "Monica Lucas",
@@ -41,25 +43,33 @@ const Author = () => {
     async function fetchAuthor() {
       try {
         const requestOptions = { signal: controller.signal, timeout: 15000 };
-        const [sellersResponse, newItemsResponse, collectionsResponse] =
+        const [sellersResponse, newItemsResponse, collectionsResponse, exploreResponse] =
           await Promise.all([
             axios.get(TOP_SELLERS_URL, requestOptions),
             axios.get(NEW_ITEMS_URL, requestOptions),
             axios.get(HOT_COLLECTIONS_URL, requestOptions),
+            axios.get(EXPLORE_URL, requestOptions),
           ]);
         if (
           !Array.isArray(sellersResponse.data) ||
           !Array.isArray(newItemsResponse.data) ||
-          !Array.isArray(collectionsResponse.data)
+          !Array.isArray(collectionsResponse.data) ||
+          !Array.isArray(exploreResponse.data)
         ) throw new Error("Unexpected author response");
 
         const matchingAuthor = sellersResponse.data.find(
           (seller) => String(seller.authorId) === authorId
         );
-        const authorNfts = [
+        const matchingNfts = [
           ...newItemsResponse.data.map((item) => ({ ...item, source: "New Item" })),
           ...collectionsResponse.data.map((item) => ({ ...item, source: "Hot Collection" })),
+          ...exploreResponse.data.map((item) => ({ ...item, source: "Explore" })),
         ].filter((item) => String(item.authorId) === authorId);
+        const authorNfts = Array.from(
+          new Map(
+            matchingNfts.map((item) => [item.nftId || `${item.source}-${item.id}`, item])
+          ).values()
+        );
         if (!controller.signal.aborted) {
           setAuthor(matchingAuthor || null);
           setNfts(authorNfts);

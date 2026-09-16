@@ -3,32 +3,15 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
+import Countdown from "../UI/Countdown";
 
 const NEW_ITEMS_URL =
   "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
-
-const formatCountdown = (expiryDate, now) => {
-  if (expiryDate == null) return null;
-
-  const expiry = Number(expiryDate);
-  if (!Number.isFinite(expiry)) return null;
-
-  const secondsLeft = Math.max(0, Math.ceil((expiry - now) / 1000));
-  if (secondsLeft === 0) return "Expired";
-
-  const days = Math.floor(secondsLeft / 86400);
-  const hours = Math.floor((secondsLeft % 86400) / 3600);
-  const minutes = Math.floor((secondsLeft % 3600) / 60);
-  const seconds = secondsLeft % 60;
-
-  return `${days ? `${days}d ` : ""}${hours}h ${minutes}m ${seconds}s`;
-};
 
 const NewItems = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [now, setNow] = useState(Date.now());
   const [currentSlide, setCurrentSlide] = useState(0);
   const [sliderRef, slider] = useKeenSlider({
     mode: "snap",
@@ -67,12 +50,6 @@ const NewItems = () => {
     return () => controller.abort();
   }, []);
 
-  useEffect(() => {
-    if (!items.some((item) => item.expiryDate != null)) return undefined;
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, [items]);
-
   return (
     <section id="section-items" className="no-bottom">
       <div className="container">
@@ -92,13 +69,10 @@ const NewItems = () => {
             <div className="col-12">
               <div className="new-items-carousel">
                 <div ref={sliderRef} className="keen-slider new-items-slider" aria-label="New items carousel">
-                  {items.map((item) => {
-            const countdown = formatCountdown(item.expiryDate, now);
-
-            return (
+                  {items.map((item) => (
               <div className="keen-slider__slide" key={item.id}>
                 <div className="nft_coll new-item-card">
-                  {countdown && <div className="de_countdown" title="Time remaining">{countdown}</div>}
+                  <Countdown expiryDate={item.expiryDate} />
                   <div className="nft_wrap">
                     <Link to={`/item-details/${item.id}`}>
                       <img
@@ -124,8 +98,7 @@ const NewItems = () => {
                   </div>
                 </div>
               </div>
-            );
-                  })}
+                  ))}
                 </div>
                 {items.length > 1 && (
                   <div className="new-items-controls">

@@ -177,3 +177,25 @@
 @media (prefers-reduced-motion: reduce) {
   .hot-collections-skeleton .skeleton-box::after { animation: none; }
 }
+
+.explore-item-card {
+  height: calc(100% - 25px);
+}
+
+.explore-item-card .nft__item_wrap {
+  height: auto;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.explore-item-card .nft__item_wrap a {
+  height: 100%;
+}
+
+.explore-item-card .nft__item_preview {
+  display: block;
+  width: 100%;
+  height: 100% !important;
+  object-fit: cover;
+}

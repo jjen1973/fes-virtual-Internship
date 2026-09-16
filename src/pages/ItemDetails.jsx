@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import EthImage from "../images/ethereum.svg";
 
 const NEW_ITEMS_URL =
   "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
+const EXPLORE_URL =
+  "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore";
 
 const ItemDetails = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const isExploreItem = location.pathname.startsWith("/explore/item/");
+  const itemsUrl = isExploreItem ? EXPLORE_URL : NEW_ITEMS_URL;
+  const backPath = isExploreItem ? "/explore" : "/";
+  const backLabel = isExploreItem ? "Back to Explore" : "View New Items";
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(Boolean(id));
   const [error, setError] = useState("");
@@ -22,7 +29,7 @@ const ItemDetails = () => {
 
     async function fetchItem() {
       try {
-        const { data } = await axios.get(NEW_ITEMS_URL, {
+        const { data } = await axios.get(itemsUrl, {
           signal: controller.signal,
           timeout: 15000,
         });
@@ -44,7 +51,7 @@ const ItemDetails = () => {
 
     fetchItem();
     return () => controller.abort();
-  }, [id]);
+  }, [id, itemsUrl]);
 
   const selectedItem = item && String(item.id) === id ? item : null;
 
@@ -54,9 +61,9 @@ const ItemDetails = () => {
         <div id="top"></div>
         <section aria-label="Item details" className="mt90 sm-mt-0">
           <div className="container">
-            {!id && <p>Select a New Item to see its details. <Link to="/">View New Items</Link></p>}
+            {!id && <p>Select an item to see its details. <Link to={backPath}>{backLabel}</Link></p>}
             {id && loading && <p role="status">Loading item details...</p>}
-            {id && !loading && error && <p role="alert">{error} <Link to="/">View New Items</Link></p>}
+            {id && !loading && error && <p role="alert">{error} <Link to={backPath}>{backLabel}</Link></p>}
             {id && !loading && !error && selectedItem && (
               <div className="row">
                 <div className="col-md-6 text-center">
@@ -79,11 +86,13 @@ const ItemDetails = () => {
                     <div className="item_author">
                       <h6>Creator</h6>
                       <div className="author_list_pp">
-                        <img
-                          className="lazy"
-                          src={selectedItem.authorImage}
-                          alt={`Creator of ${selectedItem.title}`}
-                        />
+                        <Link to={`/${selectedItem.authorId}/author`}>
+                          <img
+                            className="lazy"
+                            src={selectedItem.authorImage}
+                            alt={`Creator of ${selectedItem.title}`}
+                          />
+                        </Link>
                       </div>
                       <div className="author_list_info">Creator ID: {selectedItem.authorId}</div>
                     </div>
@@ -98,6 +107,7 @@ const ItemDetails = () => {
                         ? "No expiry date"
                         : `Expires: ${new Date(Number(selectedItem.expiryDate)).toLocaleString()}`}
                     </p>
+                    {isExploreItem && <Link to="/explore">Back to Explore</Link>}
                   </div>
                 </div>
               </div>

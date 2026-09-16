@@ -1,78 +1,112 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
+import Countdown from "../UI/Countdown";
+
+const EXPLORE_URL =
+  "https://us-central1-nft-cloud-functions.cloudfunctions.net/explore";
+const INITIAL_ITEMS = 8;
+const LOAD_MORE_COUNT = 4;
 
 const ExploreItems = () => {
+  const [items, setItems] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_ITEMS);
+  const [sortBy, setSortBy] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchItems() {
+      try {
+        const { data } = await axios.get(EXPLORE_URL, {
+          signal: controller.signal,
+          timeout: 15000,
+        });
+        if (!Array.isArray(data)) throw new Error("Unexpected explore response");
+        if (!controller.signal.aborted) setItems(data);
+      } catch (requestError) {
+        if (!controller.signal.aborted) {
+          setError("Unable to load Explore items. Please try again later.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    fetchItems();
+    return () => controller.abort();
+  }, []);
+
+  const sortedItems = useMemo(() => {
+    const nextItems = [...items];
+    if (sortBy === "price_low_to_high") return nextItems.sort((a, b) => a.price - b.price);
+    if (sortBy === "price_high_to_low") return nextItems.sort((a, b) => b.price - a.price);
+    if (sortBy === "likes_high_to_low") return nextItems.sort((a, b) => b.likes - a.likes);
+    return nextItems;
+  }, [items, sortBy]);
+
+  const visibleItems = sortedItems.slice(0, visibleCount);
+
   return (
     <>
-      <div>
-        <select id="filter-items" defaultValue="">
+      <div className="col-12">
+        <select
+          id="filter-items"
+          value={sortBy}
+          onChange={(event) => setSortBy(event.target.value)}
+          aria-label="Sort Explore items"
+        >
           <option value="">Default</option>
           <option value="price_low_to_high">Price, Low to High</option>
           <option value="price_high_to_low">Price, High to Low</option>
           <option value="likes_high_to_low">Most liked</option>
         </select>
       </div>
-      {new Array(8).fill(0).map((_, index) => (
-        <div
-          key={index}
-          className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
-          style={{ display: "block", backgroundSize: "cover" }}
-        >
-          <div className="nft__item">
+      {loading && <p className="col-12" role="status">Loading Explore items...</p>}
+      {error && <p className="col-12" role="alert">{error}</p>}
+      {!loading && !error && items.length === 0 && (
+        <p className="col-12">No Explore items available.</p>
+      )}
+      {!loading && !error && visibleItems.map((item) => (
+        <div key={item.id} className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12">
+          <div className="nft__item explore-item-card">
             <div className="author_list_pp">
-              <Link
-                to="/author"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-              >
-                <img className="lazy" src={AuthorImage} alt="" />
-                <i className="fa fa-check"></i>
+              <Link to={`/${item.authorId}/author`} title={`View creator of ${item.title}`}>
+                <img className="lazy" src={item.authorImage} alt={`Creator of ${item.title}`} />
+                <i className="fa fa-check" aria-hidden="true"></i>
               </Link>
             </div>
-            <div className="de_countdown">5h 30m 32s</div>
-
+            <Countdown expiryDate={item.expiryDate} />
             <div className="nft__item_wrap">
-              <div className="nft__item_extra">
-                <div className="nft__item_buttons">
-                  <button>Buy Now</button>
-                  <div className="nft__item_share">
-                    <h4>Share</h4>
-                    <a href="" target="_blank" rel="noreferrer">
-                      <i className="fa fa-facebook fa-lg"></i>
-                    </a>
-                    <a href="" target="_blank" rel="noreferrer">
-                      <i className="fa fa-twitter fa-lg"></i>
-                    </a>
-                    <a href="">
-                      <i className="fa fa-envelope fa-lg"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <Link to="/item-details">
-                <img src={nftImage} className="lazy nft__item_preview" alt="" />
+              <Link to={`/explore/item/${item.id}`}>
+                <img src={item.nftImage} className="lazy nft__item_preview" alt={item.title} />
               </Link>
             </div>
             <div className="nft__item_info">
-              <Link to="/item-details">
-                <h4>Pinky Ocean</h4>
-              </Link>
-              <div className="nft__item_price">1.74 ETH</div>
+              <Link to={`/explore/item/${item.id}`}><h4>{item.title}</h4></Link>
+              <div className="nft__item_price">{Number(item.price).toFixed(2)} ETH</div>
               <div className="nft__item_like">
-                <i className="fa fa-heart"></i>
-                <span>69</span>
+                <i className="fa fa-heart" aria-hidden="true"></i>
+                <span>{item.likes}</span>
               </div>
             </div>
           </div>
         </div>
       ))}
-      <div className="col-md-12 text-center">
-        <Link to="" id="loadmore" className="btn-main lead">
-          Load more
-        </Link>
-      </div>
+      {!loading && !error && visibleCount < sortedItems.length && (
+        <div className="col-md-12 text-center">
+          <button
+            type="button"
+            id="loadmore"
+            className="btn-main lead"
+            onClick={() => setVisibleCount((count) => count + LOAD_MORE_COUNT)}
+          >
+            Load more
+          </button>
+        </div>
+      )}
     </>
   );
 };

@@ -29,8 +29,11 @@ test("loads the seller matching the author ID in the URL", async () => {
     if (url.endsWith("/newItems")) return Promise.resolve({ data: [
       { id: 10, authorId: 222, title: "Seller NFT", nftImage: "/nft.jpg", price: 2.5 },
     ] });
-    return Promise.resolve({ data: [
+    if (url.endsWith("/hotCollections")) return Promise.resolve({ data: [
       { id: 20, authorId: 222, title: "Seller Collection", nftImage: "/collection.jpg" },
+    ] });
+    return Promise.resolve({ data: [
+      { id: 30, nftId: 300, authorId: 222, title: "Explore NFT", nftImage: "/explore.jpg" },
     ] });
   });
 
@@ -53,6 +56,9 @@ test("loads the seller matching the author ID in the URL", async () => {
   expect(screen.queryByText("Pinky Ocean")).not.toBeInTheDocument();
   expect(screen.getByText("Seller NFT")).toBeInTheDocument();
   expect(screen.getByText("Seller Collection")).toBeInTheDocument();
+  expect(screen.getByText("Explore NFT")).toBeInTheDocument();
   expect(screen.getByText("2.50 ETH")).toBeInTheDocument();
-  expect(screen.getAllByText(/New Item|Hot Collection/)).toHaveLength(2);
+  expect(screen.getByText("New Item")).toBeInTheDocument();
+  expect(screen.getByText("Hot Collection")).toBeInTheDocument();
+  expect(screen.getByText("Explore")).toBeInTheDocument();
 });
