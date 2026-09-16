@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { API_URLS } from "../../api/nftApi";
 import useApiList from "../../hooks/useApiList";
+import { SellerListSkeleton } from "../UI/LoadingSkeletons";
 
 const TopSellers = () => {
   const { data: sellers, loading, error } = useApiList(
@@ -20,7 +21,7 @@ const TopSellers = () => {
             </div>
           </div>
           <div className="col-md-12">
-            {loading && <p role="status">Loading top sellers...</p>}
+            {loading && <SellerListSkeleton />}
             {error && <p role="alert">{error}</p>}
             {!loading && !error && sellers.length === 0 && <p>No top sellers available.</p>}
             {!loading && !error && sellers.length > 0 && (

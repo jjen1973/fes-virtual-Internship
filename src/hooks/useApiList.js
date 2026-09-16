@@ -8,6 +8,8 @@ const useApiList = (url, errorMessage) => {
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
+    setError("");
 
     async function loadData() {
       try {

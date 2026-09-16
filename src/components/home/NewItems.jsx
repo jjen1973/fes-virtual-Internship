@@ -4,6 +4,7 @@ import Countdown from "../UI/Countdown";
 import { API_URLS } from "../../api/nftApi";
 import useApiList from "../../hooks/useApiList";
 import useResponsiveCarousel from "../../hooks/useResponsiveCarousel";
+import { NftGridSkeleton } from "../UI/LoadingSkeletons";
 
 const NewItems = () => {
   const { data: items, loading, error } = useApiList(
@@ -22,7 +23,7 @@ const NewItems = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          {loading && <p className="col-12" role="status">Loading new items...</p>}
+          {loading && <NftGridSkeleton count={4} label="Loading new items" />}
           {error && <p className="col-12" role="alert">{error}</p>}
           {!loading && !error && items.length === 0 && (
             <p className="col-12">No new items available.</p>

@@ -32,6 +32,7 @@ test("renders API items and updates only their real expiry countdowns", async ()
 
   try {
     const { container } = render(<MemoryRouter><NewItems /></MemoryRouter>);
+    expect(screen.getByRole("status", { name: "Loading new items" })).toBeInTheDocument();
     await screen.findByText("Item 7");
 
     expect(container.querySelectorAll(".new-item-card")).toHaveLength(7);

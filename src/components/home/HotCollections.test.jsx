@@ -27,6 +27,7 @@ test("maps collections to their details and author routes", async () => {
 
   render(<MemoryRouter><HotCollections /></MemoryRouter>);
 
+  expect(screen.getByRole("status", { name: "Loading hot collections" })).toBeInTheDocument();
   expect(await screen.findByRole("heading", { name: "Abstraction" })).toBeInTheDocument();
   expect(screen.getAllByRole("link", { name: "Abstraction" })[0]).toHaveAttribute(
     "href",

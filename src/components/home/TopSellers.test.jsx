@@ -23,6 +23,7 @@ test("renders all 12 sellers from the API", async () => {
     </MemoryRouter>
   );
 
+  expect(screen.getByRole("status", { name: "Loading top sellers" })).toBeInTheDocument();
   expect(await screen.findByText("Seller 12")).toBeInTheDocument();
   expect(container.querySelectorAll(".author_list > li")).toHaveLength(12);
   expect(screen.getByRole("img", { name: "Seller 1" })).toHaveAttribute(

@@ -205,8 +205,92 @@
   min-height: 220px;
 }
 
+.nft-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.nft-loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 20px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.nft-loading-card .skeleton-box:first-child {
+  display: block;
+  aspect-ratio: 1;
+}
+
+.seller-loading-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seller-loading-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 767px) {
+  .nft-loading-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 575px) {
   #profile_banner.author-profile-banner {
     min-height: 160px;
+  }
+
+  .nft-loading-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.explore-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.explore-search {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+}
+
+.explore-search input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.explore-search .fa-search {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: #8364e2;
+  pointer-events: none;
+}
+
+@media (max-width: 575px) {
+  .explore-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .explore-search,
+  #filter-items {
+    max-width: none;
+    width: 100%;
   }
 }
