@@ -50,8 +50,8 @@ const Footer = () => (
                   className="form-control"
                   id="txt_subscribe"
                   name="email"
-                  placeholder="enter your email"
-                  type="text"
+                  placeholder="email"
+                  type="email"
                   inputMode="email"
                 />
                 <button type="submit" id="btn-subscribe" aria-label="Subscribe">

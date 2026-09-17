@@ -357,7 +357,15 @@ header .connect-wallet,
 }
 
 #menu-btn {
-  background: transparent;
+  border-radius: 8px;
+  background: #8364e2;
+  color: #fff;
+}
+
+#menu-btn:hover,
+#menu-btn:focus-visible {
+  background: #6f4fd2;
+  color: #fff;
 }
 
 header .connect-wallet {
@@ -369,12 +377,21 @@ header .connect-wallet {
   top: 24px;
 }
 
+#section-hero {
+  box-sizing: border-box;
+  padding-top: 62px;
+}
+
+#section-hero .v-center {
+  min-height: calc(100vh - 62px);
+}
+
 #form_subscribe .col {
   display: flex;
   align-items: stretch;
 }
 
-.footer-light #form_subscribe input[type="text"] {
+.footer-light #form_subscribe input[type="email"] {
   flex: 1;
   float: none;
   min-width: 0;
@@ -424,7 +441,76 @@ header .connect-wallet {
   }
 }
 
+@media (max-width: 992px) {
+  header {
+    display: block;
+  }
+
+  #mainmenu {
+    display: none;
+  }
+
+  header .header-col-mid {
+    margin-left: auto;
+  }
+
+  #menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    margin-left: 12px;
+    border-radius: 8px;
+    background: #8364e2;
+    color: #fff;
+  }
+
+  #menu-btn::before,
+  #menu-btn:hover::before,
+  #menu-btn:focus-visible::before {
+    color: #fff;
+  }
+
+  #dropdown__wrapper {
+    position: fixed;
+    z-index: 1100;
+  }
+
+  #section-hero .row > .col-md-6:first-child {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  #section-hero .xs-hide {
+    display: none;
+  }
+
+  #section-hero h1 {
+    max-width: 720px;
+    font-size: clamp(38px, 7vw, 54px);
+    line-height: 1.1;
+  }
+
+  #section-hero p.lead {
+    max-width: 680px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+}
+
 @media (max-width: 575px) {
+  .footer-light #form_subscribe input[type="email"] {
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  #form_subscribe #btn-subscribe {
+    flex-basis: 44px;
+    width: 44px;
+  }
+
   #profile_banner.author-profile-banner {
     min-height: 160px;
   }
