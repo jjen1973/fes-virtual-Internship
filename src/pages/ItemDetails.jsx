@@ -1,35 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import EthImage from "../images/ethereum.svg";
-import { API_URLS, fetchApiList } from "../api/nftApi";
+import { API_URLS, fetchApiObject } from "../api/nftApi";
+import { ItemDetailsSkeleton } from "../components/UI/LoadingSkeletons";
+
+const PersonRow = ({ label, id, image, name }) => (
+  <div className="item-person">
+    <h6>{label}</h6>
+    <Link className="item-person-link" to={`/${id}/author`}>
+      <span className="author_list_pp">
+        <img className="lazy" src={image} alt={`${label} ${name}`} />
+        <i className="fa fa-check" aria-hidden="true"></i>
+      </span>
+      <strong>{name}</strong>
+    </Link>
+  </div>
+);
 
 const ItemDetails = () => {
-  const { id } = useParams();
+  const { id: nftId } = useParams();
   const location = useLocation();
   const isExploreItem = location.pathname.startsWith("/explore/item/");
-  const itemsUrl = isExploreItem ? API_URLS.explore : API_URLS.newItems;
   const backPath = isExploreItem ? "/explore" : "/";
-  const backLabel = isExploreItem ? "Back to Explore" : "View New Items";
+  const backLabel = isExploreItem ? "Back to Explore" : "Back to marketplace";
   const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(Boolean(id));
+  const [loading, setLoading] = useState(Boolean(nftId));
   const [error, setError] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!id) return undefined;
+    if (!nftId) return undefined;
 
     const controller = new AbortController();
+    setItem(null);
     setLoading(true);
     setError("");
 
-    async function fetchItem() {
+    async function loadItem() {
       try {
-        const data = await fetchApiList(itemsUrl, controller.signal);
-        const matchingItem = data.find((entry) => String(entry.id) === id);
-        if (!controller.signal.aborted) {
-          setItem(matchingItem || null);
-          if (!matchingItem) setError("Item not found.");
-        }
+        const data = await fetchApiObject(
+          `${API_URLS.itemDetails}?nftId=${encodeURIComponent(nftId)}`,
+          controller.signal
+        );
+        if (!controller.signal.aborted) setItem(data);
       } catch (requestError) {
         if (!controller.signal.aborted) {
           setError("Unable to load this item. Please try again later.");
@@ -39,11 +52,9 @@ const ItemDetails = () => {
       }
     }
 
-    fetchItem();
+    loadItem();
     return () => controller.abort();
-  }, [id, itemsUrl]);
-
-  const selectedItem = item && String(item.id) === id ? item : null;
+  }, [nftId]);
 
   return (
     <div id="wrapper">
@@ -51,53 +62,56 @@ const ItemDetails = () => {
         <div id="top"></div>
         <section aria-label="Item details" className="mt90 sm-mt-0">
           <div className="container">
-            {!id && <p>Select an item to see its details. <Link to={backPath}>{backLabel}</Link></p>}
-            {id && loading && <p role="status">Loading item details...</p>}
-            {id && !loading && error && <p role="alert">{error} <Link to={backPath}>{backLabel}</Link></p>}
-            {id && !loading && !error && selectedItem && (
-              <div className="row">
-                <div className="col-md-6 text-center">
+            {!nftId && <p>Select an item to see its details. <Link to="/">View items</Link></p>}
+            {nftId && loading && <ItemDetailsSkeleton />}
+            {nftId && !loading && error && (
+              <p role="alert">{error} <Link to={backPath}>{backLabel}</Link></p>
+            )}
+            {nftId && !loading && !error && item && (
+              <div className="row item-details-layout">
+                <div className="col-md-6 text-center item-details-artwork">
                   <img
-                    src={selectedItem.nftImage}
+                    src={item.nftImage}
                     className="img-fluid img-rounded mb-sm-30 nft-image"
-                    alt={selectedItem.title}
+                    alt={item.title}
                   />
                 </div>
                 <div className="col-md-6">
                   <div className="item_info">
-                    <h2>{selectedItem.title}</h2>
+                    <h2>{item.title} #{item.tag}</h2>
                     <div className="item_info_counts">
+                      <div className="item_info_views">
+                        <i className="fa fa-eye" aria-hidden="true"></i>
+                        <span>{item.views} views</span>
+                      </div>
                       <div className="item_info_like">
                         <i className="fa fa-heart" aria-hidden="true"></i>
-                        {selectedItem.likes} likes
+                        <span>{item.likes} likes</span>
                       </div>
                     </div>
-                    <p>Item ID: {selectedItem.nftId}</p>
-                    <div className="item_author">
-                      <h6>Creator</h6>
-                      <div className="author_list_pp">
-                        <Link to={`/${selectedItem.authorId}/author`}>
-                          <img
-                            className="lazy"
-                            src={selectedItem.authorImage}
-                            alt={`Creator of ${selectedItem.title}`}
-                          />
-                        </Link>
+                    <p className="item-description">{item.description}</p>
+
+                    <PersonRow
+                      label="Owner"
+                      id={item.ownerId}
+                      image={item.ownerImage}
+                      name={item.ownerName}
+                    />
+                    <PersonRow
+                      label="Creator"
+                      id={item.creatorId}
+                      image={item.creatorImage}
+                      name={item.creatorName}
+                    />
+
+                    <div className="item-price-block">
+                      <h6>Price</h6>
+                      <div className="nft-item-price">
+                        <img src={EthImage} alt="Ethereum" />
+                        <span>{Number(item.price).toFixed(2)} ETH</span>
                       </div>
-                      <div className="author_list_info">Creator ID: {selectedItem.authorId}</div>
                     </div>
-                    <div className="spacer-40"></div>
-                    <h6>Price</h6>
-                    <div className="nft-item-price">
-                      <img src={EthImage} alt="" />
-                      <span>{Number(selectedItem.price).toFixed(2)} ETH</span>
-                    </div>
-                    <p>
-                      {selectedItem.expiryDate == null
-                        ? "No expiry date"
-                        : `Expires: ${new Date(Number(selectedItem.expiryDate)).toLocaleString()}`}
-                    </p>
-                    {isExploreItem && <Link to="/explore">Back to Explore</Link>}
+                    <Link className="item-details-back" to={backPath}>{backLabel}</Link>
                   </div>
                 </div>
               </div>

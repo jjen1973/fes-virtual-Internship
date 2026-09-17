@@ -280,6 +280,66 @@
   border: 0;
 }
 
+.item-details-loading-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.item_info_counts {
+  display: flex;
+  gap: 12px;
+}
+
+.item_info_views,
+.item_info_like {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.item-description {
+  margin: 28px 0;
+}
+
+.item-person {
+  margin: 22px 0;
+}
+
+.item-person-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  color: #0d0c22;
+}
+
+.item-person-link .author_list_pp {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.item-person-link .author_list_pp img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.item-price-block {
+  margin-top: 30px;
+}
+
+.item-details-back {
+  display: inline-block;
+  margin-top: 24px;
+}
+
+.item-details-artwork .nft-image {
+  max-height: 680px;
+  object-fit: cover;
+  width: 100%;
+}
+
 @media (max-width: 767px) {
   .nft-loading-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

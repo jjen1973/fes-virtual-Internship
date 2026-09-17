@@ -21,6 +21,7 @@ test("renders API items and updates only their real expiry countdowns", async ()
 
   const items = Array.from({ length: 7 }, (_, index) => ({
     id: index + 1,
+    nftId: 101 + index,
     title: `Item ${index + 1}`,
     nftImage: `/item-${index + 1}.jpg`,
     authorImage: "/creator.jpg",
@@ -39,7 +40,7 @@ test("renders API items and updates only their real expiry countdowns", async ()
     expect(container.querySelectorAll(".keen-slider__slide")).toHaveLength(7);
     expect(screen.getByRole("button", { name: "Next new item" })).toBeInTheDocument();
     expect(screen.getByText("1 / 7")).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "Item 1" })[0]).toHaveAttribute("href", "/item-details/1");
+    expect(screen.getAllByRole("link", { name: "Item 1" })[0]).toHaveAttribute("href", "/item-details/101");
     expect(screen.getByText("5.07 ETH")).toBeInTheDocument();
     expect(screen.getByText("69")).toBeInTheDocument();
     expect(container.querySelectorAll(".de_countdown")).toHaveLength(1);

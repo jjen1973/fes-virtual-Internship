@@ -87,12 +87,12 @@ const ExploreItems = () => {
             </div>
             <Countdown expiryDate={item.expiryDate} />
             <div className="nft__item_wrap">
-              <Link to={`/explore/item/${item.id}`}>
+              <Link to={`/explore/item/${item.nftId}`}>
                 <img src={item.nftImage} className="lazy nft__item_preview" alt={item.title} />
               </Link>
             </div>
             <div className="nft__item_info">
-              <Link to={`/explore/item/${item.id}`}><h4>{item.title}</h4></Link>
+              <Link to={`/explore/item/${item.nftId}`}><h4>{item.title}</h4></Link>
               <div className="nft__item_price">{Number(item.price).toFixed(2)} ETH</div>
               <div className="nft__item_like">
                 <i className="fa fa-heart" aria-hidden="true"></i>

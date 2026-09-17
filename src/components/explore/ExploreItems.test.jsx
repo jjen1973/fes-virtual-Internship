@@ -11,6 +11,7 @@ test("shows 8 API items first and loads 4 more per click", async () => {
   jest.spyOn(Date, "now").mockReturnValue(1000000);
   const items = Array.from({ length: 16 }, (_, index) => ({
     id: index + 1,
+    nftId: 101 + index,
     authorId: 2000 + index,
     authorImage: `/author-${index + 1}.jpg`,
     nftImage: `/nft-${index + 1}.jpg`,
@@ -36,7 +37,7 @@ test("shows 8 API items first and loads 4 more per click", async () => {
     );
     expect(screen.getAllByRole("link", { name: "Explore Item 1" })[0]).toHaveAttribute(
       "href",
-      "/explore/item/1"
+      "/explore/item/101"
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Load more" }));

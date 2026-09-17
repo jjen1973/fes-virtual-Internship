@@ -8,6 +8,7 @@ export const API_URLS = {
   newItems: `${API_ROOT}/newItems`,
   topSellers: `${API_ROOT}/topSellers`,
   authors: `${API_ROOT}/authors`,
+  itemDetails: `${API_ROOT}/itemDetails`,
 };
 
 export const fetchApiList = async (url, signal) => {

@@ -122,10 +122,12 @@ const Author = () => {
                         <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={nft.nftId}>
                           <article className="nft_coll author-nft-card">
                             <div className="nft_wrap">
-                              <img src={nft.nftImage} className="img-fluid" alt={nft.title} />
+                              <Link to={`/item-details/${nft.nftId}`}>
+                                <img src={nft.nftImage} className="img-fluid" alt={nft.title} />
+                              </Link>
                             </div>
                             <div className="nft_coll_info">
-                              <h4>{nft.title}</h4>
+                              <Link to={`/item-details/${nft.nftId}`}><h4>{nft.title}</h4></Link>
                               <span>NFT #{nft.nftId}</span>
                               <div>{Number(nft.price).toFixed(2)} ETH</div>
                               <div className="author-nft-likes">

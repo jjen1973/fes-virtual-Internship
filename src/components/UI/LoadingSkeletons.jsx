@@ -41,3 +41,19 @@ export const AuthorProfileSkeleton = () => (
     <NftGridSkeleton count={4} label="Loading author NFTs" />
   </div>
 );
+
+export const ItemDetailsSkeleton = () => (
+  <div className="row item-details-loading" role="status" aria-label="Loading item details">
+    <div className="col-md-6" aria-hidden="true">
+      <Skeleton width="100%" height="500px" borderRadius="10px" />
+    </div>
+    <div className="col-md-6 item-details-loading-copy" aria-hidden="true">
+      <Skeleton width="70%" height="36px" borderRadius="4px" />
+      <Skeleton width="35%" height="18px" borderRadius="4px" />
+      <Skeleton width="100%" height="90px" borderRadius="4px" />
+      <Skeleton width="65%" height="60px" borderRadius="6px" />
+      <Skeleton width="65%" height="60px" borderRadius="6px" />
+      <Skeleton width="35%" height="24px" borderRadius="4px" />
+    </div>
+  </div>
+);

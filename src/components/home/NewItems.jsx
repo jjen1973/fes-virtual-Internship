@@ -37,7 +37,7 @@ const NewItems = () => {
                 <div className="nft_coll new-item-card">
                   <Countdown expiryDate={item.expiryDate} />
                   <div className="nft_wrap">
-                    <Link to={`/item-details/${item.id}`}>
+                    <Link to={`/item-details/${item.nftId}`}>
                       <img
                         src={item.nftImage}
                         className="lazy img-fluid"
@@ -52,7 +52,7 @@ const NewItems = () => {
                     <i className="fa fa-check" aria-hidden="true"></i>
                   </div>
                   <div className="nft_coll_info">
-                    <Link to={`/item-details/${item.id}`}><h4>{item.title}</h4></Link>
+                    <Link to={`/item-details/${item.nftId}`}><h4>{item.title}</h4></Link>
                     <div className="new-item-price">{Number(item.price).toFixed(2)} ETH</div>
                     <div className="new-item-like">
                       <i className="fa fa-heart" aria-hidden="true"></i>
