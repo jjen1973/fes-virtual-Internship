@@ -340,6 +340,24 @@
   width: 100%;
 }
 
+.mobile-connect-wallet {
+  padding: 12px 28px;
+  border: 2px solid #a98df0;
+  border-radius: 8px;
+  background: #8364e2;
+  box-shadow: 0 8px 22px rgba(17, 12, 46, 0.3);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.mobile-connect-wallet:hover,
+.mobile-connect-wallet:focus-visible {
+  background: #9b7bea;
+  transform: translateY(-2px);
+}
+
 @media (max-width: 767px) {
   .nft-loading-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
