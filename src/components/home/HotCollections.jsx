@@ -17,7 +17,7 @@ const HotCollections = () => {
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
-            <div className="text-center">
+            <div className="text-center" data-aos="fade-up">
               <h2>Hot Collections</h2>
               <div className="small-border bg-color-2"></div>
             </div>
@@ -44,9 +44,9 @@ const HotCollections = () => {
             <div className="col-12">
               <div className="hot-collections-carousel">
               <div ref={sliderRef} className="keen-slider hot-collections-slider" aria-label="Hot collections carousel">
-                {collections.map((collection) => (
+                {collections.map((collection, index) => (
                   <div className="keen-slider__slide" key={collection.id}>
-              <div className="nft_coll">
+              <div className="nft_coll" data-aos="fade-up" data-aos-delay={Math.min(index * 60, 240)}>
                 <div className="nft_wrap">
                   <Link to={`/collection-details/${collection.id}`}>
                     <img src={collection.nftImage} className="lazy img-fluid" alt={collection.title} />

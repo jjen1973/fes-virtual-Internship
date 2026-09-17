@@ -18,7 +18,7 @@ const NewItems = () => {
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
-            <div className="text-center">
+            <div className="text-center" data-aos="fade-up">
               <h2>New Items</h2>
               <div className="small-border bg-color-2"></div>
             </div>
@@ -32,9 +32,9 @@ const NewItems = () => {
             <div className="col-12">
               <div className="new-items-carousel">
                 <div ref={sliderRef} className="keen-slider new-items-slider" aria-label="New items carousel">
-                  {items.map((item) => (
+                  {items.map((item, index) => (
               <div className="keen-slider__slide" key={item.id}>
-                <div className="nft_coll new-item-card">
+                <div className="nft_coll new-item-card" data-aos="fade-up" data-aos-delay={Math.min(index * 60, 240)}>
                   <Countdown expiryDate={item.expiryDate} />
                   <div className="nft_wrap">
                     <Link to={`/item-details/${item.nftId}`}>

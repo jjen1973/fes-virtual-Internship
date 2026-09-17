@@ -69,14 +69,14 @@ const ItemDetails = () => {
             )}
             {nftId && !loading && !error && item && (
               <div className="row item-details-layout">
-                <div className="col-md-6 text-center item-details-artwork">
+                <div className="col-md-6 text-center item-details-artwork" data-aos="fade-right">
                   <img
                     src={item.nftImage}
                     className="img-fluid img-rounded mb-sm-30 nft-image"
                     alt={item.title}
                   />
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6" data-aos="fade-left">
                   <div className="item_info">
                     <h2>{item.title} #{item.tag}</h2>
                     <div className="item_info_counts">

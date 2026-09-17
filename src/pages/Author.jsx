@@ -72,7 +72,7 @@ const Author = () => {
             {!loading && !error && author && (
               <div className="row">
                 <div className="col-md-12">
-                  <div className="d_profile de-flex">
+                  <div className="d_profile de-flex" data-aos="fade-up">
                     <div className="de-flex-col">
                       <div className="profile_avatar">
                         <img src={author.authorImage} alt={author.authorName} />
@@ -118,8 +118,13 @@ const Author = () => {
                     <p className="text-center">No NFTs are available for this author.</p>
                   ) : (
                     <div className="row">
-                      {author.nftCollection.map((nft) => (
-                        <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={nft.nftId}>
+                      {author.nftCollection.map((nft, index) => (
+                        <div
+                          className="col-lg-3 col-md-6 col-sm-6 col-xs-12"
+                          key={nft.nftId}
+                          data-aos="fade-up"
+                          data-aos-delay={Math.min((index % 4) * 60, 180)}
+                        >
                           <article className="nft_coll author-nft-card">
                             <div className="nft_wrap">
                               <Link to={`/item-details/${nft.nftId}`}>

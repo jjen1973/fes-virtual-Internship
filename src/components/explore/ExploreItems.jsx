@@ -76,8 +76,13 @@ const ExploreItems = () => {
       {!loading && !error && items.length > 0 && matchingItems.length === 0 && (
         <p className="col-12">No items match your search.</p>
       )}
-      {!loading && !error && visibleItems.map((item) => (
-        <div key={item.id} className="d-item explore-item col-md-3 col-sm-6 col-xs-12">
+      {!loading && !error && visibleItems.map((item, index) => (
+        <div
+          key={item.id}
+          className="d-item explore-item col-md-3 col-sm-6 col-xs-12"
+          data-aos="fade-up"
+          data-aos-delay={Math.min((index % 4) * 60, 180)}
+        >
           <div className="nft__item explore-item-card">
             <div className="author_list_pp">
               <Link to={`/${item.authorId}/author`} title={`View creator of ${item.title}`}>

@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import Home from "./pages/Home";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Explore from "./pages/Explore";
@@ -8,6 +11,18 @@ import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 
 function App() {
+  useEffect(() => {
+    AOS.init({
+      duration: 650,
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 60,
+      disable: () =>
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    });
+  }, []);
+
   return (
     <Router>
       <Nav />
