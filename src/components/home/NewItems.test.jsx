@@ -32,18 +32,17 @@ test("renders API items and updates only their real expiry countdowns", async ()
   axios.get.mockResolvedValue({ data: items });
 
   try {
-    const { container } = render(<MemoryRouter><NewItems /></MemoryRouter>);
+    render(<MemoryRouter><NewItems /></MemoryRouter>);
     expect(screen.getByRole("status", { name: "Loading new items" })).toBeInTheDocument();
     await screen.findByText("Item 7");
 
-    expect(container.querySelectorAll(".new-item-card")).toHaveLength(7);
-    expect(container.querySelectorAll(".keen-slider__slide")).toHaveLength(7);
+    expect(screen.getAllByRole("heading", { level: 4 })).toHaveLength(7);
     expect(screen.getByRole("button", { name: "Next new item" })).toBeInTheDocument();
     expect(screen.getByText("1 / 7")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Item 1" })[0]).toHaveAttribute("href", "/item-details/101");
     expect(screen.getByText("5.07 ETH")).toBeInTheDocument();
     expect(screen.getByText("69")).toBeInTheDocument();
-    expect(container.querySelectorAll(".de_countdown")).toHaveLength(1);
+    expect(screen.getAllByTitle("Time remaining")).toHaveLength(1);
     expect(screen.getByText("0h 0m 5s")).toBeInTheDocument();
 
     Date.now.mockReturnValue(1003000);

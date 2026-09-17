@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { API_URLS, fetchApiList } from "../api/nftApi";
+import VerifiedAuthorLink from "../components/UI/VerifiedAuthorLink";
 
 const CollectionDetails = () => {
   const { id } = useParams();
@@ -54,9 +55,11 @@ const CollectionDetails = () => {
                     <div className="item_author">
                       <h6>Creator</h6>
                       <div className="author_list_pp">
-                        <Link to={`/${collection.authorId}/author`}>
-                          <img className="lazy" src={collection.authorImage} alt={`Creator of ${collection.title}`} />
-                        </Link>
+                        <VerifiedAuthorLink
+                          authorId={collection.authorId}
+                          image={collection.authorImage}
+                          alt={`Creator of ${collection.title}`}
+                        />
                       </div>
                       <div className="author_list_info">Creator ID: {collection.authorId}</div>
                     </div>

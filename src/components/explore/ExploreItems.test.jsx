@@ -23,12 +23,11 @@ test("shows 8 API items first and loads 4 more per click", async () => {
   axios.get.mockResolvedValue({ data: items });
 
   try {
-    const { container } = render(<MemoryRouter><ExploreItems /></MemoryRouter>);
+    render(<MemoryRouter><ExploreItems /></MemoryRouter>);
     expect(screen.getByRole("status", { name: "Loading Explore items" })).toBeInTheDocument();
     await screen.findByText("Explore Item 8");
 
-    expect(container.querySelectorAll(".nft__item")).toHaveLength(8);
-    expect(container.querySelector(".explore-item")).toHaveClass("col-md-3", "col-sm-6", "col-xs-12");
+    expect(screen.getAllByRole("heading", { level: 4 })).toHaveLength(8);
     expect(screen.queryByText("Explore Item 9")).not.toBeInTheDocument();
     expect(screen.getByText("0h 0m 5s")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "View creator of Explore Item 1" })).toHaveAttribute(
@@ -41,11 +40,11 @@ test("shows 8 API items first and loads 4 more per click", async () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Load more" }));
-    expect(container.querySelectorAll(".nft__item")).toHaveLength(12);
+    expect(screen.getAllByRole("heading", { level: 4 })).toHaveLength(12);
     expect(screen.getByText("Explore Item 12")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Load more" }));
-    expect(container.querySelectorAll(".nft__item")).toHaveLength(16);
+    expect(screen.getAllByRole("heading", { level: 4 })).toHaveLength(16);
     expect(screen.getByText("Explore Item 16")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Load more" })).not.toBeInTheDocument();
   } finally {

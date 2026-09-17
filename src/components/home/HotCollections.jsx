@@ -4,6 +4,8 @@ import Skeleton from "../UI/Skeleton";
 import { API_URLS } from "../../api/nftApi";
 import useApiList from "../../hooks/useApiList";
 import useResponsiveCarousel from "../../hooks/useResponsiveCarousel";
+import SectionTitle from "../UI/SectionTitle";
+import VerifiedAuthorLink from "../UI/VerifiedAuthorLink";
 
 const HotCollections = () => {
   const { data: collections, loading, error } = useApiList(
@@ -16,12 +18,7 @@ const HotCollections = () => {
     <section id="section-collections" className="no-bottom">
       <div className="container">
         <div className="row">
-          <div className="col-lg-12">
-            <div className="text-center" data-aos="fade-up">
-              <h2>Hot Collections</h2>
-              <div className="small-border bg-color-2"></div>
-            </div>
-          </div>
+          <SectionTitle>Hot Collections</SectionTitle>
           {loading && (
             <div className="col-12 hot-collections-skeleton" role="status" aria-label="Loading hot collections">
               {[0, 1, 2, 3].map((item) => (
@@ -53,10 +50,13 @@ const HotCollections = () => {
                   </Link>
                 </div>
                 <div className="nft_coll_pp">
-                  <Link to={`/${collection.authorId}/author`} title={`View creator of ${collection.title}`}>
-                    <img className="lazy pp-coll" src={collection.authorImage} alt={`Creator of ${collection.title}`} />
-                  </Link>
-                  <i className="fa fa-check"></i>
+                  <VerifiedAuthorLink
+                    authorId={collection.authorId}
+                    image={collection.authorImage}
+                    alt={`Creator of ${collection.title}`}
+                    title={`View creator of ${collection.title}`}
+                    imageClassName="lazy pp-coll"
+                  />
                 </div>
                 <div className="nft_coll_info">
                   <Link to={`/collection-details/${collection.id}`}>

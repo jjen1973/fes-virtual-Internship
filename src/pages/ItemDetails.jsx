@@ -3,17 +3,23 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import EthImage from "../images/ethereum.svg";
 import { API_URLS, fetchApiObject } from "../api/nftApi";
 import { ItemDetailsSkeleton } from "../components/UI/LoadingSkeletons";
+import VerifiedAuthorLink from "../components/UI/VerifiedAuthorLink";
 
 const PersonRow = ({ label, id, image, name }) => (
   <div className="item-person">
     <h6>{label}</h6>
-    <Link className="item-person-link" to={`/${id}/author`}>
+    <div className="item-person-link">
       <span className="author_list_pp">
-        <img className="lazy" src={image} alt={`${label} ${name}`} />
-        <i className="fa fa-check" aria-hidden="true"></i>
+        <VerifiedAuthorLink
+          authorId={id}
+          image={image}
+          alt={`${label} ${name}`}
+        />
       </span>
+      <Link to={`/${id}/author`}>
       <strong>{name}</strong>
-    </Link>
+      </Link>
+    </div>
   </div>
 );
 

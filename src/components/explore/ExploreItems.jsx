@@ -4,6 +4,7 @@ import Countdown from "../UI/Countdown";
 import { API_URLS } from "../../api/nftApi";
 import useApiList from "../../hooks/useApiList";
 import { NftGridSkeleton } from "../UI/LoadingSkeletons";
+import VerifiedAuthorLink from "../UI/VerifiedAuthorLink";
 const INITIAL_ITEMS = 8;
 const LOAD_MORE_COUNT = 4;
 
@@ -85,10 +86,12 @@ const ExploreItems = () => {
         >
           <div className="nft__item explore-item-card">
             <div className="author_list_pp">
-              <Link to={`/${item.authorId}/author`} title={`View creator of ${item.title}`}>
-                <img className="lazy" src={item.authorImage} alt={`Creator of ${item.title}`} />
-                <i className="fa fa-check" aria-hidden="true"></i>
-              </Link>
+              <VerifiedAuthorLink
+                authorId={item.authorId}
+                image={item.authorImage}
+                alt={`Creator of ${item.title}`}
+                title={`View creator of ${item.title}`}
+              />
             </div>
             <Countdown expiryDate={item.expiryDate} />
             <div className="nft__item_wrap">

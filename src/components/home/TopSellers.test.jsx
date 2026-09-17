@@ -17,7 +17,7 @@ test("renders all 12 sellers from the API", async () => {
   }));
   axios.get.mockResolvedValue({ data: sellers });
 
-  const { container } = render(
+  render(
     <MemoryRouter>
       <TopSellers />
     </MemoryRouter>
@@ -25,7 +25,7 @@ test("renders all 12 sellers from the API", async () => {
 
   expect(screen.getByRole("status", { name: "Loading top sellers" })).toBeInTheDocument();
   expect(await screen.findByText("Seller 12")).toBeInTheDocument();
-  expect(container.querySelectorAll(".author_list > li")).toHaveLength(12);
+  expect(screen.getAllByRole("listitem")).toHaveLength(12);
   expect(screen.getByRole("img", { name: "Seller 1" })).toHaveAttribute(
     "src",
     "/seller-1.jpg"

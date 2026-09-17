@@ -1,12 +1,4 @@
 @import "./css/styles/bootstrap.min.css";
-@import "./css/styles/bootstrap-grid.min.css";
-@import "./css/styles/bootstrap-reboot.min.css";
-@import "./css/styles/animate.css";
-@import "./css/styles/owl.carousel.css";
-@import "./css/styles/owl.theme.css";
-@import "./css/styles/owl.transitions.css";
-@import "./css/styles/magnific-popup.css";
-@import "./css/styles/jquery.countdown.css";
 @import "./css/styles/style.css";
 @import "./css/colors/scheme-01.css";
 @import "./css/styles/coloring.css";
@@ -356,6 +348,74 @@
 .mobile-connect-wallet:focus-visible {
   background: #9b7bea;
   transform: translateY(-2px);
+}
+
+#menu-btn,
+header .connect-wallet,
+#form_subscribe #btn-subscribe {
+  border: 0;
+}
+
+#menu-btn {
+  background: transparent;
+}
+
+header .connect-wallet {
+  padding: 6px 20px;
+}
+
+.hero-eyebrow {
+  position: relative;
+  top: 24px;
+}
+
+#form_subscribe .col {
+  display: flex;
+  align-items: stretch;
+}
+
+.footer-light #form_subscribe input[type="text"] {
+  flex: 1;
+  float: none;
+  min-width: 0;
+  width: auto;
+  height: 54px;
+  padding: 0 14px;
+  border: 1px solid #333;
+  border-right: 0;
+  border-radius: 9px 0 0 9px;
+  background: #fff;
+  color: #606060;
+  font-size: 16px;
+}
+
+#form_subscribe #btn-subscribe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 48px;
+  float: none;
+  width: 48px;
+  height: 54px;
+  padding: 0;
+  border-radius: 0 9px 9px 0;
+  background: #8364e2;
+}
+
+#form_subscribe #btn-subscribe:hover,
+#form_subscribe #btn-subscribe:focus-visible {
+  background: #6f4fd2;
+}
+
+#form_subscribe #btn-subscribe i {
+  float: none;
+  width: auto;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
 }
 
 @media (max-width: 767px) {

@@ -5,6 +5,8 @@ import { API_URLS } from "../../api/nftApi";
 import useApiList from "../../hooks/useApiList";
 import useResponsiveCarousel from "../../hooks/useResponsiveCarousel";
 import { NftGridSkeleton } from "../UI/LoadingSkeletons";
+import SectionTitle from "../UI/SectionTitle";
+import VerifiedAuthorLink from "../UI/VerifiedAuthorLink";
 
 const NewItems = () => {
   const { data: items, loading, error } = useApiList(
@@ -17,12 +19,7 @@ const NewItems = () => {
     <section id="section-items" className="no-bottom">
       <div className="container">
         <div className="row">
-          <div className="col-lg-12">
-            <div className="text-center" data-aos="fade-up">
-              <h2>New Items</h2>
-              <div className="small-border bg-color-2"></div>
-            </div>
-          </div>
+          <SectionTitle>New Items</SectionTitle>
           {loading && <NftGridSkeleton count={4} label="Loading new items" />}
           {error && <p className="col-12" role="alert">{error}</p>}
           {!loading && !error && items.length === 0 && (
@@ -46,10 +43,13 @@ const NewItems = () => {
                     </Link>
                   </div>
                   <div className="nft_coll_pp">
-                    <Link to={`/${item.authorId}/author`} title={`View creator of ${item.title}`}>
-                      <img className="lazy pp-coll" src={item.authorImage} alt={`Creator of ${item.title}`} />
-                    </Link>
-                    <i className="fa fa-check" aria-hidden="true"></i>
+                    <VerifiedAuthorLink
+                      authorId={item.authorId}
+                      image={item.authorImage}
+                      alt={`Creator of ${item.title}`}
+                      title={`View creator of ${item.title}`}
+                      imageClassName="lazy pp-coll"
+                    />
                   </div>
                   <div className="nft_coll_info">
                     <Link to={`/item-details/${item.nftId}`}><h4>{item.title}</h4></Link>
